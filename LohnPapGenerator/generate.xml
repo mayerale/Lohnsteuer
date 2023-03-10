@@ -2,18 +2,28 @@
 <project name="LohnPapGenerator" default="generate">
 
 	<property name="papDir" value="src/de/powerproject/lohnpap/pap/" />
+	<property name="buildDir" value="build/" />
+
 
 	<target name="generate">
+	    <antcall target="compileGenerator" />
 		<antcall target="generatePap" />
 		<antcall target="generateJar" />
+	</target>
+
+    <target name="compileGenerator">	
+		<delete dir="${buildDir}" />
+		<mkdir dir="${buildDir}" />
+		<javac srcdir="src/de/powerproject/lohnpap/generator" destdir="${buildDir}" includeantruntime="false" />
 	</target>
 
 	<target name="generatePap">
 		<delete dir="${papDir}" />
 		<mkdir dir="${papDir}" />
+		
 		<java classname="de.powerproject.lohnpap.generator.Generator">
 			<classpath>
-				<pathelement path="bin" />
+				<pathelement path="build" />
 			</classpath>
 		</java>
 	</target>
@@ -21,20 +31,20 @@
 	<target name="generateJar">
 
 		<!-- clean build folder -->
-		<delete dir="build" />
-		<mkdir dir="build/classes" />
+		<delete dir="${buildDir}" />
+		<mkdir dir="${buildDir}/classes" />
 		
 		<copy file="LICENSE" tofile="build/classes/LICENSE" />
 
 		<!-- build classes -->
-		<javac srcdir="${papDir}" destdir="build/classes"
+		<javac srcdir="${papDir}" destdir="${buildDir}/classes"
 			includeantruntime="false" />
 
 		<!-- build jar file -->
-		<jar destfile="lohnsteuer.jar" basedir="build/classes" />
+		<jar destfile="lohnsteuer.jar" basedir="${buildDir}/classes" />
 
 		<!-- clean -->
-		<delete dir="build" />
+		<delete dir="${buildDir}" />
 
 	</target>
 
